@@ -39,10 +39,21 @@ client.discover()
                     streams.splice(index, 1);
                 });
             }
-			else if (req.url == '/control') {
-				
+			else if (req.url == '/control/left') {
+				console.info('left');
+				client.steer(1);
+			}
+			else if (req.url == '/control/forward') {
+				console.info('forward');
+				client.move(0.5);
+//				client.steer(0);
+			}
+			else if (req.url == '/control/right') {
+				console.info('right');
+				client.steer(-1);
 			}
             else {
+				console.info('request', req.url);
 				consumeRequest(res, req.url);
             }
         });
@@ -55,6 +66,8 @@ client.discover()
                 if (streams[i]) streams[i](data);
             }
         });
+	
+		console.log(client);
     });
 
 var mimes = {
@@ -88,7 +101,7 @@ function fileHandler(response, url, error, content)
 
 function consumeRequest(response, url)
 {
-	url = '.' + (url === '/' ? '/webhome/index.html' : './webhome/' + url);
+	url = '.' + (url === '/' ? '/webhome/index.html' : '/webhome/' + url);
 
 	fs.readFile(url, fileHandler.bind(null, response, url));
 };
