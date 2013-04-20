@@ -20,7 +20,7 @@ client.discover()
 		// Sends camera stream to each request
 		client.startCamera(0, function(data) {
 
-		fs.writeFile("imgs/img"+(counter++)+".jpg", data, function() {
+		fs.writeFile("imgs/img"+(counter++)+".jpg", data.image, function() {
 			console.log('writing', arguments);
 		})
 	});
