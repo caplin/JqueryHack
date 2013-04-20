@@ -1,4 +1,5 @@
 var fs = require('fs');
+var url = require('url');
 var http = require('http');
 var client = require('node-wirc').car;
 
@@ -38,8 +39,8 @@ function requestHandler(req, res) {
 	if (req.url == '/stream') {
 		sendCarWebcamImage(req, res);
 	}
-	else if (req.url.substring(0, 9) === '/control/') {
-		handleControlRequest(req.url);
+	else if (req.url.substring(0, 9) === '/control?') {
+		handleControlRequest(req.url, res);
 	}
 	else {
 		console.info('request', req.url);
@@ -71,25 +72,42 @@ function sendCarWebcamImage(req, res) {
 	});
 };
 
-function handleControlRequest(url) {
-	var urlParts = url.split('/');
-	var direction = urlParts[2];
-	var force = urlParts[3];
+function handleControlRequest(sUrl, res) {
+//	var ?move=0.4&steer=-0.5
+
+	var parsedUrl = url.parse(sUrl, true);
+	var queryParam = parsedUrl.query;
 	
-	console.info(direction, force);
+	console.info(queryParam);
 	
-	if (direction == 'left') {
-		console.info('left', force);
-		client.steer(1);
-	}
-	else if (direction == 'forward') {
-		console.info('forward', force);
-		client.move(0.5);
-	}
-	else if (direction == 'right') {
-		console.info('right', force);
-		client.steer(-1);
-	}
+	var move = parseFloat(queryParam.move);
+	var steer = parseFloat(queryParam.steer);
+	
+	client.move(move);
+	client.steer(steer);
+	
+	res.end();
+	
+//	console.info(parsedUrl);
+	
+//	var urlParts = url.split('/');
+//	var direction = urlParts[2];
+//	var force = urlParts[3];
+//	
+//	console.info(direction, force);
+//	
+//	if (direction == 'left') {
+//		console.info('left', force);
+//		client.steer(1);
+//	}
+//	else if (direction == 'forward') {
+//		console.info('forward', force);
+//		client.move(0.5);
+//	}
+//	else if (direction == 'right') {
+//		console.info('right', force);
+//		client.steer(-1);
+//	}
 };
 
 function consumeRequest(response, url) {
