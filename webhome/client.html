@@ -1,6 +1,20 @@
 <html>
 <body>
-hello
 
+	<canvas id='can' width=352 height=288 ></canvas>
+
+	<script>
+
+		var img = new Image();
+		img.src = "http://192.168.1.2/stream";
+
+		var can = document.getElementById('can');
+		var g = can.getContext('2d');
+
+		setInterval(function() {
+			g.drawImage(img, 0, 0);
+		}, 20);
+
+	</script>
 </body>
 </html>
