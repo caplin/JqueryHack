@@ -1,29 +1,36 @@
 var client = require('node-wirc').car;
 
-var serialNumber = "0000944";
+var caplinCar = "0000944";
+var wobot = "0000828";
 
 client.discover()
-		.then(function() { return client.connect(serialNumber); })
-		.then(function() { return client.enable(); })
-		.then(function() {
+.then(function() {
+	console.log('discovered');
+	return client.connect(wobot);
+}).then(function() {
+	console.log('connected');
+	return client.enable();
+})
+.then(function() {
+	console.log('control enabled');
+	var steer = 1;
+	var move = 0.5;
 
-			var steer = 1;
-			var move = 0.5;
+	// Full left (might be right...)
+	client.steer(steer);
 
-			// Full left (might be right...)
-			client.steer(steer);
+	// Full forward!
+	client.move(move);
 
-			// Full forward!
-			client.move(move);
+	// Let's dance
+	setInterval(function() {
 
-			// Let's dance
-			setInterval(function() {
+		// And the other way
+		steer = -steer;
+		move = -move;
 
-				// And the other way
-				steer = -steer;
-				move = -move;
+		client.move(move);
+		client.steer(steer);
+	}, 800)
+});
 
-				client.move(move);
-				client.steer(steer);
-			}, 800)
-		});
