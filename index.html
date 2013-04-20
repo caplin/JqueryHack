@@ -32,107 +32,25 @@
 		var originalCanvas = ctx.getImageData(0,0,img.width,img.height);
 		var gaussianCanvs = stackBlurCanvasRGB("canvas", 0,0, img.width,img.height, 10);
 
-		var edgeArray = [];
+		var edgeArray = [[]];
 
-		var iWidth = img.width;
-		var iHeight = img.height;
-		console.log(img.width, img.height, img.width*img.height, gaussianCanvs.data.length / 4);
 		for (var i=0; i < gaussianCanvs.data.length; i+=4) {
 			//var pixelDiff = diffPixels(x.data,i, i+10);
 			var firstPixel = getPixelAverage(originalCanvas.data,i);
 			var secondPixel = getPixelAverage(gaussianCanvs.data,i);
 			//console.log(firstPixel, secondPixel);
-			var y = Math.floor((i/4)/iWidth);
-			var x = (i/4) % iWidth;
-			//console.log(x);
-			//console.log(x,y);
-			if (x == 2447) {
-				console.log((i/4), iWidth);
-			}
-			if (edgeArray[x] == undefined) {
+			var x = Math.floor(i/img.width);
+			var y = i % img.width;
+			if (edgeArray[x] = undefined) {
 				edgeArray[x] = [];
 			}
-			//console.log(edgeArray);
 			if (firstPixel > 30+secondPixel) {
 				brightenPixel(originalCanvas.data,i,-200);
-				edgeArray[x][y] = true;
-			} else {
-				//edgeArray[x][y] = false;
+				edgeArray[x] = true;
 			};
 		}
-		var consecLines = getRegionsInEdgeArray(edgeArray);
-		consecLines.sort(function(a, b) {return b.length - a.length});
-		//console.log(consecLines);
-		//console.log(edgeArray);
+		console.log(edgeArray);
 		ctx.putImageData(originalCanvas,0,0);
-
-		var votes = [];
-		for (var i=0; i < 10; i++) {
-			var region = consecLines[i];
-			region.sort(function(a, b) {return b.x - a.x})
-			var firstPoint = region[0];
-			var secondPoint = region[region.length-1];
-			var dX = firstPoint.x - secondPoint.x;
-			var dY = firstPoint.y - secondPoint.y;
-			var gradient = dY/dX;
-			if (Math.abs(gradient) > 1) {
-
-			} else {
-				if (gradient < 0) {
-					votes.push("left");
-				} else {
-					votes.push("right");
-				}
-			}
-			//console.log(gradient, region.length);
-		}
-
-		console.log(votes);
-//		for (var i=0; i < consecLines.length; i++) {
-//			if (consecLines[i].length >= 5) {
-//
-//				console.log("asdf", consecLines[i].length);
-//			}
-//		}
-	}
-
-	function getRegionsInEdgeArray(edgeArray) {
-		var segments = [];
-		for (var x=0; x < edgeArray.length; x++) {
-			for (var y=0; y < edgeArray[x].length; y++) {
-				if (edgeArray[x][y] == true) {
-					segments.push(getRegion(edgeArray, x, y));
-				}
-			}
-		}
-		return segments;
-	}
-
-	function getRegion(edgeArray, xIn, yIn) {
-		var neighborsToCheck = [{x: xIn, y:yIn}];
-		var neighbors = []
-
-		while (neighborsToCheck.length > 0) {
-			var current = neighborsToCheck.pop();
-			neighbors.push(current);
-
-			for (var dx = -1; dx <= 1; dx++) {
-				for (var dy = -1; dy <= 1; dy++) {
-					if (dx!= 0 || dy != 0) {
-						try {
-							var n = edgeArray[current.x+dx][current.y+dy];
-							if (n == true) {
-								neighborsToCheck.push({x:current.x+dx, y:current.y+dy})
-								edgeArray[current.x+dx][current.y+dy] = false;
-							}
-						} catch (e) {
-
-						}
-					}
-				}
-			}
-		}
-		return neighbors;
 	}
 
 	function diffPixels(array, pixel1, pixel2) {
