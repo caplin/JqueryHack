@@ -1,0 +1,25 @@
+<html>
+<body>
+<canvas id="canvas"></canvas>
+<script>
+	var can = document.getElementById('canvas');
+	var ctx = can.getContext('2d');
+
+	var img = new Image();
+	img.onload = function(){
+		can.width = img.width;
+		can.height = img.height;
+
+		ctx.scale(0.5,0.5);
+		ctx.drawImage(img, 0, 0, img.width, img.height);
+	}
+	img.src = "test_data/apex1.jpg";
+
+	can.onclick = function() {
+		ctx.translate(img.width-1, img.height-1);
+		ctx.rotate(Math.PI);
+		ctx.drawImage(img, 0, 0, img.width, img.height);
+	};
+</script>
+</body>
+</html>
