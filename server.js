@@ -27,15 +27,10 @@ client.discover()
         server.listen(8000);
 
         // Sends camera stream to each request
-        client.startCamera(0, function(data) {
-            for (var i = 0; i < streams.length; i++) {
-                if (streams[i]) streams[i](data);
-            }
-		});
+        client.startCamera(0, handleCamera);
 	});
 
 function requestHandler(req, res) {
-//	console.info(req.url.substring(0, 8));
 	if (req.url == '/stream') {
 		sendCarWebcamImage(req, res);
 	}
@@ -73,41 +68,27 @@ function sendCarWebcamImage(req, res) {
 };
 
 function handleControlRequest(sUrl, res) {
-//	var ?move=0.4&steer=-0.5
-
 	var parsedUrl = url.parse(sUrl, true);
 	var queryParam = parsedUrl.query;
 	
 	console.info(queryParam);
 	
-	var move = parseFloat(queryParam.move);
-	var steer = parseFloat(queryParam.steer);
-	
-	client.move(move);
-	client.steer(steer);
+	if(queryParam.record !== undefined)
+	{
+		var length = parseFloat(queryParam.record);
+		
+		
+	}
+	else
+	{
+		var move = parseFloat(queryParam.move);
+		var steer = parseFloat(queryParam.steer);
+
+		client.move(move);
+		client.steer(steer);
+	}
 	
 	res.end();
-	
-//	console.info(parsedUrl);
-	
-//	var urlParts = url.split('/');
-//	var direction = urlParts[2];
-//	var force = urlParts[3];
-//	
-//	console.info(direction, force);
-//	
-//	if (direction == 'left') {
-//		console.info('left', force);
-//		client.steer(1);
-//	}
-//	else if (direction == 'forward') {
-//		console.info('forward', force);
-//		client.move(0.5);
-//	}
-//	else if (direction == 'right') {
-//		console.info('right', force);
-//		client.steer(-1);
-//	}
 };
 
 function consumeRequest(response, url) {
@@ -134,4 +115,14 @@ function fileHandler(response, url, error, content) {
 		response.writeHead(200, { 'Content-Type': mime });
 		response.end(content, 'utf-8');
 	}
+};
+
+function handleCamera(data) {
+	for (var i = 0; i < streams.length; i++) {
+		if (streams[i]) streams[i](data);
+	}
+	
+//	fs.writeFile("imgs/img"+(counter++)+".jpg", data.image, function() {
+//			console.log('writing', arguments);
+//		}
 };
