@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+	<head><title>control</title></head>
+	<body>
+		<div id="control-box" style="background-color:blue;height:600px;width:600px; display:inline-block;">
+			<div id="control-stick" style="background-color:red; height:100px; width:100px; border-radius:50px; position:absolute; left:250px; top:250px;"></div>
+		</div>
+		<div style="display:inline-block;">
+			<div>
+				<div>move = <span id="move">0</span></div>
+				<div>steer = <span id="steer">0</span></div>
+				<div><span id="status">Stopped</span></div>
+			</div>
+			<img src="http://192.168.1.2:8000/stream" />
+		</div>
+		<script type="text/javascript">
+			var stick = document.getElementById("control-stick");
+			var box = document.getElementById("control-box");
+			var moveContainer = document.getElementById("move");
+			var steerContainer = document.getElementById("steer");
+			var statusContainer = document.getElementById("status");
+			window.interval = null;
+			box.addEventListener("mousemove",function(event){
+				var pageX = event.x - box.offsetLeft;
+				var pageY = event.y - box.offsetTop;
+				
+				var x = Math.max(box.offsetLeft, Math.min(pageX - 50, 500 + box.offsetLeft));
+				var y = Math.max(box.offsetTop, Math.min(pageY - 50, 500 + box.offsetTop));
+				
+				stick.style.left = x + "px";
+				stick.style.top = y + "px";
+				
+				var steer = (x - box.offsetLeft) / 250 - 1;
+				var move = (y - box.offsetTop) / 250 - 1;
+				
+				steerContainer.innerHTML = -steer;
+				moveContainer.innerHTML = move;
+				
+			}, true);
+			
+			document.body.onclick = function() {
+				if(window.interval !== null) {
+					window.clearInterval(interval)
+					window.interval = null;
+					var xhr = new XMLHttpRequest();
+					xhr.open("POST", "http://192.168.1.2:8000/control?move=0&steer=0");
+					xhr.send();
+					statusContainer.innerHTML = "stopped";
+				}
+				else
+				{
+					interval = window.setInterval(function(){
+						var xhr = new XMLHttpRequest();
+						xhr.open("POST", "http://192.168.1.2:8000/control?move=" + moveContainer.innerHTML + "&steer=" + steerContainer.innerHTML);
+						xhr.send();
+						
+					},1000);
+					statusContainer.innerHTML = "running";
+				}
+			}
+			
+		</script>
+	</body>
+</html>
