@@ -1,5 +1,8 @@
 <html>
 <body>
+<button onclick="previousImage()">Previous</button>
+<button onclick="nextImage()">Next</button>
+<br />
 <canvas id="canvas"></canvas>
 <script>
 var can = document.getElementById('canvas');
@@ -16,15 +19,30 @@ var img = new Image();
 //	g.drawImage(img, 0, 0);
 //}, 20);
 
-setInterval(function() {
-
+//setInterval(function() {
+function runAlgo() {
 	can.width = img.width;
 	can.height = img.height;
 	ctx.drawImage(img, 0, 0, img.width, img.height);
 	applyFilter();
-}, 1000);
+//}, 1000);
+}
+var imageNumber = 1;
 
-img.src = "imgs/img33.jpg";
+function nextImage() {
+	img.src = "imgs/img" + ++imageNumber + ".jpg";
+	setTimeout(function() {
+		runAlgo();
+	},10);
+}
+
+function previousImage() {
+	img.src = "imgs/img" + --imageNumber + ".jpg";
+	setTimeout(function() {
+		runAlgo();
+	},10);
+}
+
 //img.src = "http://192.168.1.2/stream";
 
 //img.onload = function(){
