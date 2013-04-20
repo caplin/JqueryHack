@@ -1,11 +1,12 @@
 var client = require('node-wirc').car;
 
-var serialNumber = "0000944";
+var caplinCar = "0000944";
+var wobot = "0000828";
 
 client.discover()
 .then(function() {
 	console.log('discovered');
-	return client.connect(serialNumber);
+	return client.connect(wobot);
 }).then(function() {
 	console.log('connected');
 	return client.enable();
