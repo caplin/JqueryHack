@@ -77,6 +77,8 @@ function handleControlRequest(sUrl, res) {
 	if(queryParam.record !== undefined)
 	{
 		imageRecordLength = Date.now() + (1000 * parseFloat(queryParam.record));
+		
+		console.info(imageRecordLength);
 	}
 	else
 	{
@@ -126,5 +128,7 @@ function handleCamera(data) {
 		fs.writeFile("imgs/img"+(counter++)+".jpg", data.image, function() {
 				console.log('writing', arguments);
 		});
+	
+		console.info('Recording image');
 	}
 };

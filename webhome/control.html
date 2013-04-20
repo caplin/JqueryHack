@@ -11,7 +11,8 @@
 				<div>steer = <span id="steer">0</span></div>
 				<div><span id="status">Stopped</span></div>
 			</div>
-			<img src="http://192.168.1.2:8000/stream" />
+			<img src="http://localhost:8000/stream" />
+			<button id="record">Record for 20 seconds</button>
 		</div>
 		<script type="text/javascript">
 			var stick = document.getElementById("control-stick");
@@ -34,16 +35,26 @@
 				var move = (y - box.offsetTop) / 250 - 1;
 				
 				steerContainer.innerHTML = -steer;
-				moveContainer.innerHTML = move;
+				moveContainer.innerHTML = -move;
 				
 			}, true);
 			
-			document.body.onclick = function() {
+			var eRecordButton = document.getElementById('record');
+			
+			eRecordButton.addEventListener('click', sendRecordCommand);
+			
+			function sendRecordCommand() {
+				var xhr = new XMLHttpRequest();
+				xhr.open("POST", "http://localhost:8000/control?record=0");
+				xhr.send();
+			}
+			
+			box.onclick = function() {
 				if(window.interval !== null) {
 					window.clearInterval(interval)
 					window.interval = null;
 					var xhr = new XMLHttpRequest();
-					xhr.open("POST", "http://192.168.1.2:8000/control?move=0&steer=0");
+					xhr.open("POST", "http://localhost:8000/control?move=0&steer=0");
 					xhr.send();
 					statusContainer.innerHTML = "stopped";
 				}
@@ -51,10 +62,10 @@
 				{
 					interval = window.setInterval(function(){
 						var xhr = new XMLHttpRequest();
-						xhr.open("POST", "http://192.168.1.2:8000/control?move=" + moveContainer.innerHTML + "&steer=" + steerContainer.innerHTML);
+						xhr.open("POST", "http://localhost:8000/control?move=" + moveContainer.innerHTML + "&steer=" + steerContainer.innerHTML);
 						xhr.send();
 						
-					},1000);
+					},10);
 					statusContainer.innerHTML = "running";
 				}
 			}
