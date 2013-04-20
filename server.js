@@ -71,9 +71,9 @@ function sendCarWebcamImage(req, res) {
 function handleControlRequest(sUrl, res) {
 	var parsedUrl = url.parse(sUrl, true);
 	var queryParam = parsedUrl.query;
-	
+
 	console.info(queryParam);
-	
+
 	if(queryParam.record !== undefined)
 	{
 		imageRecordLength = Date.now() + (1000 * parseFloat(queryParam.record));
@@ -86,7 +86,7 @@ function handleControlRequest(sUrl, res) {
 		client.move(move);
 		client.steer(steer);
 	}
-	
+
 	res.end();
 };
 
@@ -120,7 +120,7 @@ function handleCamera(data) {
 	for (var i = 0; i < streams.length; i++) {
 		if (streams[i]) streams[i](data);
 	}
-	
+
 	if(Date.now() < imageRecordTime)
 	{
 		fs.writeFile("imgs/img"+(counter++)+".jpg", data.image, function() {
