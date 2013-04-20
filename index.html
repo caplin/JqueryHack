@@ -15,7 +15,10 @@ img.onload = function(){
 
 	applyFilter();
 }
-img.src = "test_data/apex1.jpg";
+//img.src = "imgs/img106.jpg"; //Straight
+//img.src = "imgs/img.jpg"; //Left
+img.src = "imgs/img33.jpg";
+//img.src = "imgs/img74.jpg";
 
 can.onclick = function() {
 	ctx.translate(img.width-1, img.height-1);
@@ -74,20 +77,28 @@ function sharpenImage	() {
 		var secondPoint = region[region.length-1];
 		var dX = firstPoint.x - secondPoint.x;
 		var dY = firstPoint.y - secondPoint.y;
-		var gradient = dY/dX;
+		var gradient = (dY/dX);
 		if (Math.abs(gradient) > 1) {
-
 		} else {
+
+			gradient = gradient * region.length;
 			if (gradient < 0) {
-				votes.push("left");
+				votes.push({direction:"right", weight: gradient});
 			} else {
-				votes.push("right");
+				votes.push({direction:"left", weight: gradient});
 			}
 		}
 		//console.log(gradient, region.length);
 	}
 
 	console.log(votes);
+
+	var count = 0;
+	for (var i=0; i < votes.length; i++) {
+		//console.log(votes[i].weight);
+		count += votes[i].weight;
+	}
+	console.log(count);
 //		for (var i=0; i < consecLines.length; i++) {
 //			if (consecLines[i].length >= 5) {
 //
