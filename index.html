@@ -29,19 +29,28 @@
 	}
 
 	function sharpenImage	() {
-		x = ctx.getImageData(0,0,img.width,img.height);
-		y = stackBlurCanvasRGB("canvas", 0,0, img.width,img.height, 10);
+		var originalCanvas = ctx.getImageData(0,0,img.width,img.height);
+		var gaussianCanvs = stackBlurCanvasRGB("canvas", 0,0, img.width,img.height, 10);
 
-		for (var i=0; i < y.data.length; i+=4) {
+		var edgeArray = [[]];
+
+		for (var i=0; i < gaussianCanvs.data.length; i+=4) {
 			//var pixelDiff = diffPixels(x.data,i, i+10);
-			var firstPixel = getPixelAverage(x.data,i);
-			var secondPixel = getPixelAverage(y.data,i);
+			var firstPixel = getPixelAverage(originalCanvas.data,i);
+			var secondPixel = getPixelAverage(gaussianCanvs.data,i);
 			//console.log(firstPixel, secondPixel);
+			var x = Math.floor(i/img.width);
+			var y = i % img.width;
+			if (edgeArray[x] = undefined) {
+				edgeArray[x] = [];
+			}
 			if (firstPixel > 30+secondPixel) {
-				brightenPixel(x.data,i,-200);
+				brightenPixel(originalCanvas.data,i,-200);
+				edgeArray[x] = true;
 			};
 		}
-		ctx.putImageData(x,0,0);
+		console.log(edgeArray);
+		ctx.putImageData(originalCanvas,0,0);
 	}
 
 	function diffPixels(array, pixel1, pixel2) {
@@ -63,12 +72,12 @@
 	}
 
 	function lightenImage() {
-		x = ctx.getImageData(0,0,img.width,img.height);
+		var waffle = ctx.getImageData(0,0,img.width,img.height);
 
 		for (var i=0; i < x.data.length; i++) {
-			x.data[i] = x.data[i]/2
+			waffle.data[i] = x.data[i]/2
 		}
-		ctx.putImageData(x,0,0);
+		ctx.putImageData(waffle,0,0);
 	}
 
 
@@ -212,7 +221,7 @@
 		var mul_sum = mul_table[radius];
 		var shg_sum = shg_table[radius];
 
-		for ( y = 0; y < height; y++ )
+		for ( gaussianCanvs = 0; gaussianCanvs < height; gaussianCanvs++ )
 		{
 			r_in_sum = g_in_sum = b_in_sum = r_sum = g_sum = b_sum = 0;
 
@@ -341,7 +350,7 @@
 			yi = x;
 			stackIn = stackStart;
 			stackOut = stackEnd;
-			for ( y = 0; y < height; y++ )
+			for ( gaussianCanvs = 0; gaussianCanvs < height; gaussianCanvs++ )
 			{
 				p = yi << 2;
 				pixels[p]   = (r_sum * mul_sum) >> shg_sum;
@@ -356,7 +365,7 @@
 				g_out_sum -= stackIn.g;
 				b_out_sum -= stackIn.b;
 
-				p = ( x + (( ( p = y + radiusPlus1) < heightMinus1 ? p : heightMinus1 ) * width )) << 2;
+				p = ( x + (( ( p = gaussianCanvs + radiusPlus1) < heightMinus1 ? p : heightMinus1 ) * width )) << 2;
 
 				r_sum += ( r_in_sum += ( stackIn.r = pixels[p]));
 				g_sum += ( g_in_sum += ( stackIn.g = pixels[p+1]));
