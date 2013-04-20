@@ -13,6 +13,7 @@ var mimes = {
 
 var streams = [];
 var woBot = "0000828";
+var imageRecordTime = 0;
 var caplinCar = "0000944";
 
 client.discover()
@@ -75,9 +76,7 @@ function handleControlRequest(sUrl, res) {
 
 	if(queryParam.record !== undefined)
 	{
-		var length = parseFloat(queryParam.record);
-
-
+		imageRecordLength = Date.now() + (1000 * parseFloat(queryParam.record));
 	}
 	else
 	{
@@ -122,7 +121,10 @@ function handleCamera(data) {
 		if (streams[i]) streams[i](data);
 	}
 
-//	fs.writeFile("imgs/img"+(counter++)+".jpg", data.image, function() {
-//			console.log('writing', arguments);
-//		}
+	if(Date.now() < imageRecordTime)
+	{
+		fs.writeFile("imgs/img"+(counter++)+".jpg", data.image, function() {
+				console.log('writing', arguments);
+		});
+	}
 };
