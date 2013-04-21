@@ -1,11 +1,13 @@
 <html>
 <body>
+		<img id="imgsource" src="http://localhost:8000/stream" />
 <canvas id="canvas"></canvas>
 <script>
 var can = document.getElementById('canvas');
 var ctx = can.getContext('2d');
 
-var img = new Image();
+//var img = new Image();
+var img = document.getElementById('imgsource');
 
 
 //
@@ -24,7 +26,7 @@ setInterval(function() {
 	applyFilter();
 }, 1000);
 
-img.src = "imgs/img33.jpg";
+//img.src = "imgs/img33.jpg";
 //img.src = "http://192.168.1.2/stream";
 
 //img.onload = function(){
