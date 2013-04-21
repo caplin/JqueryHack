@@ -45,7 +45,7 @@
 			
 			function sendRecordCommand() {
 				var xhr = new XMLHttpRequest();
-				xhr.open("POST", "http://localhost:8000/control?record=0");
+				xhr.open("POST", "http://localhost:8000/control?record=20");
 				xhr.send();
 			}
 			
@@ -62,10 +62,11 @@
 				{
 					interval = window.setInterval(function(){
 						var xhr = new XMLHttpRequest();
-						xhr.open("POST", "http://localhost:8000/control?move=" + moveContainer.innerHTML + "&steer=" + steerContainer.innerHTML);
+						var steerval = steerContainer.innerHTML * 1 > 1 ? steerContainer.innerHTML * 0.4 : steerContainer.innerHTML;
+						xhr.open("POST", "http://localhost:8000/control?move=" + (moveContainer.innerHTML * 0.4) + "&steer=" + steerval);
 						xhr.send();
 						
-					},10);
+					},200);
 					statusContainer.innerHTML = "running";
 				}
 			}
