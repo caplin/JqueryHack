@@ -76,9 +76,11 @@ function handleControlRequest(sUrl, res) {
 
 	if(queryParam.record !== undefined)
 	{
-		imageRecordLength = Date.now() + (1000 * parseFloat(queryParam.record));
+		counter = 0;
 		
-		console.info(imageRecordLength);
+		imageRecordTime = Date.now() + (1000 * parseFloat(queryParam.record));
+		
+		console.info(imageRecordTime);
 	}
 	else
 	{
@@ -118,11 +120,13 @@ function fileHandler(response, url, error, content) {
 	}
 };
 
+var counter = 0;
+
 function handleCamera(data) {
 	for (var i = 0; i < streams.length; i++) {
 		if (streams[i]) streams[i](data);
 	}
-
+	
 	if(Date.now() < imageRecordTime)
 	{
 		fs.writeFile("imgs/img"+(counter++)+".jpg", data.image, function() {
